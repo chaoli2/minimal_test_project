@@ -11,10 +11,8 @@ class MessageFilterTest : public rclcpp::Node
 public:
   MessageFilterTest() : Node("test") 
   {
-    rclcpp::Node::SharedPtr node = std::shared_ptr<rclcpp::Node>(this);
-
-    cam_sub_ = std::make_unique<camSub>(node, "/publisher1");
-    obj_sub_ = std::make_unique<objSub>(node, "/publisher2");
+    cam_sub_ = std::make_unique<camSub>(this, "/publish1");
+    obj_sub_ = std::make_unique<objSub>(this, "/publish2");
     sync_sub_ = std::make_unique<sync>(*cam_sub_, *obj_sub_, 10);
     sync_sub_->registerCallback(std::bind(&MessageFilterTest::callback, this, std::placeholders::_1, std::placeholders::_2));
   };
@@ -30,7 +28,10 @@ private:
   std::unique_ptr<objSub> obj_sub_;
   std::unique_ptr<sync> sync_sub_;
 
-  void callback(const std_msgs::msg::Header::ConstSharedPtr msg1, const std_msgs::msg::Header::ConstSharedPtr msg2) { std::cout << "callback" << std::endl; };
+  void callback(const std_msgs::msg::Header::ConstSharedPtr msg1, const std_msgs::msg::Header::ConstSharedPtr msg2)
+  {
+    std::cout << "callback" << std::endl;
+  };
 };
 
 
